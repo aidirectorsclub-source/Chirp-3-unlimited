@@ -1841,14 +1841,20 @@
                 this.alpha = this.baseAlpha;
                 this.flickerSpeed = Math.random() * 0.05 + 0.02;
                 this.angle = Math.random() * Math.PI * 2;
+
+                // Color properties (White)
+                this.r = 255;
+                this.g = 255;
+                this.b = 255;
+                this.lastRepelledTime = 0;
             }
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.fillStyle = `rgba(${Math.round(this.r)}, ${Math.round(this.g)}, ${Math.round(this.b)}, ${this.alpha})`;
                 ctx.fill();
             }
-            update() {
+            update(currentTime) {
                 if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
                 if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
 
@@ -1868,9 +1874,47 @@
                     const directionY = forceDirectionY * force * 15;
                     this.x -= directionX;
                     this.y -= directionY;
+
+                    // Interaction detected
+                    this.lastRepelledTime = currentTime;
+
+                    // Galaxy Star Effect: Constantly change to random "brutal saturation" colors
+                    // Generate a random Hue (0-360) with 100% Saturation and 50% Lightness
+                    const hue = Math.random() * 360;
+                    const s = 100;
+                    const l = 50;
+
+                    // Simple HSL to RGB conversion for Saturation=100%, Lightness=50%
+                    // C = 1, m = 0
+                    const c = 255; // 255 * 1
+                    const x = 255 * (1 - Math.abs(((hue / 60) % 2) - 1));
+
+                    let targetR, targetG, targetB;
+
+                    if (hue < 60) { targetR = c; targetG = x; targetB = 0; }
+                    else if (hue < 120) { targetR = x; targetG = c; targetB = 0; }
+                    else if (hue < 180) { targetR = 0; targetG = c; targetB = x; }
+                    else if (hue < 240) { targetR = 0; targetG = x; targetB = c; }
+                    else if (hue < 300) { targetR = x; targetG = 0; targetB = c; }
+                    else { targetR = c; targetG = 0; targetB = x; }
+
+                    // Faster lerp (0.2) for more vibrant/active color shifting
+                    this.r += (targetR - this.r) * 0.2;
+                    this.g += (targetG - this.g) * 0.2;
+                    this.b += (targetB - this.b) * 0.2;
                 } else {
                     this.x += this.directionX;
                     this.y += this.directionY;
+
+                    // Color recovery logic
+                    // If 1000ms passed since last interaction
+                    if (currentTime - this.lastRepelledTime > 1000) {
+                        // Very slowly fade back to White (255, 255, 255)
+                        // Lerp factor 0.01 for very slow transition
+                        this.r += (255 - this.r) * 0.01;
+                        this.g += (255 - this.g) * 0.01;
+                        this.b += (255 - this.b) * 0.01;
+                    }
                 }
 
                 this.angle += this.flickerSpeed;
@@ -1921,7 +1965,7 @@
             // Batch update using cached length for performance
             const len = particlesArray.length;
             for (let i = 0; i < len; i++) {
-                particlesArray[i].update();
+                particlesArray[i].update(currentTime);
             }
         }
 
