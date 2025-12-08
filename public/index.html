@@ -850,30 +850,27 @@
             }
         });
 
-        // Secure admin whitelist - hashed for additional security layer
-        // Only these emails can bypass subscription check
-        const ADMIN_WHITELIST = Object.freeze(['farbod376@gmail.com']);
+        // Check Subscription in Firestore (with secure admin check via Custom Claims)
+        async function checkSubscription(user) {
+            try {
+                // Check for admin custom claim (set server-side via makeAdmin function)
+                // This is secure because custom claims are cryptographically signed in the JWT
+                const tokenResult = await user.getIdTokenResult();
+                const isAdmin = tokenResult.claims.admin === true;
 
-        // Secure admin verification function
-        function isAdminUser(email) {
-            if (!email || typeof email !== 'string') return false;
-            const normalizedEmail = email.toLowerCase().trim();
-            // Strict comparison with whitelist
-            return ADMIN_WHITELIST.includes(normalizedEmail);
-        }
+                if (isAdmin) {
+                    // Admin user - grant access without subscription check
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => loadingScreen.style.display = 'none', 500);
 
-        // Check Subscription in Firestore
-        function checkSubscription(user) {
-            // Secure admin bypass - skip subscription check for verified admin users
-            if (user && user.email && isAdminUser(user.email)) {
-                // Silently grant access without logging sensitive info
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => loadingScreen.style.display = 'none', 500);
-
-                paywallContainer.classList.add('hidden');
-                appContainer.classList.remove('hidden');
-                setTimeout(() => appContainer.classList.remove('opacity-0'), 50);
-                return; // Skip subscription check for admin
+                    paywallContainer.classList.add('hidden');
+                    appContainer.classList.remove('hidden');
+                    setTimeout(() => appContainer.classList.remove('opacity-0'), 50);
+                    return; // Skip subscription check for admin
+                }
+            } catch (error) {
+                console.error("Error checking admin claim:", error);
+                // Continue to subscription check if admin check fails
             }
 
             const subsRef = collection(db, 'customers', user.uid, 'subscriptions');
