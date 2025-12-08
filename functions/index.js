@@ -31,26 +31,30 @@ setGlobalOptions({ maxInstances: 10 });
 //   response.send("Hello from Firebase!");
 // });
 const admin = require("firebase-admin");
-const { onCall } = require("firebase-functions/v2/https");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
 
 admin.initializeApp();
 
 // Callable function: set admin claim for a user by email
-exports.makeAdmin = onCall(async (request) => {
+exports.makeAdmin = onCall({ region: "europe-west3" }, async (request) => {
     const context = request.auth;
     const data = request.data;
 
     if (!context) {
-        throw new Error("You must be signed in to call this function.");
+        throw new HttpsError("unauthenticated", "You must be signed in to call this function.");
     }
 
     const email = data?.email;
     if (!email) {
-        throw new Error("Email is required.");
+        throw new HttpsError("invalid-argument", "Email is required.");
     }
 
-    const user = await admin.auth().getUserByEmail(email);
-    await admin.auth().setCustomUserClaims(user.uid, { admin: true });
-
-    return { message: `Admin claim set for ${email}` };
+    try {
+        const user = await admin.auth().getUserByEmail(email);
+        await admin.auth().setCustomUserClaims(user.uid, { admin: true });
+        return { message: `Admin claim set for ${email}` };
+    } catch (error) {
+        console.error("Error setting admin claim:", error);
+        throw new HttpsError("internal", error.message || "Failed to set admin claim");
+    }
 });
