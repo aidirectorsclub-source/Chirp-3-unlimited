@@ -109,16 +109,85 @@
 
         /* Glassmorphism Utilities */
         .glass-panel {
-            background: rgba(28, 28, 30, 0.75);
+            background: rgba(28, 28, 30, 0.5);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 0.12);
         }
 
         .glass-overlay {
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* Frosted Glass Button */
+        .glass-btn {
+            background: rgba(10, 132, 255, 0.5) !important;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .glass-btn:hover {
+            background: rgba(10, 132, 255, 0.65) !important;
+        }
+
+        /* Apple Liquid Glass Button */
+        .liquid-glass-btn {
+            position: relative;
+            background: linear-gradient(135deg,
+                    rgba(10, 132, 255, 0.85) 0%,
+                    rgba(10, 132, 255, 0.7) 50%,
+                    rgba(0, 98, 204, 0.85) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow:
+                0 8px 32px rgba(10, 132, 255, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .liquid-glass-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.25) 0%,
+                    rgba(255, 255, 255, 0.05) 100%);
+            border-radius: inherit;
+            pointer-events: none;
+        }
+
+        .liquid-glass-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse 100% 100% at 50% 0%,
+                    rgba(255, 255, 255, 0.15) 0%,
+                    transparent 70%);
+            pointer-events: none;
+        }
+
+        .liquid-glass-btn:hover {
+            background: linear-gradient(135deg,
+                    rgba(10, 132, 255, 0.95) 0%,
+                    rgba(10, 132, 255, 0.8) 50%,
+                    rgba(0, 98, 204, 0.95) 100%);
+            box-shadow:
+                0 12px 40px rgba(10, 132, 255, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .liquid-glass-btn:active {
+            transform: scale(0.98) translateY(0);
         }
 
         /* Particle Canvas */
@@ -131,6 +200,82 @@
             z-index: 0;
             /* Behind everything */
             pointer-events: none;
+        }
+
+        /* Subscribe Button Heartbeat Animation */
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            15% {
+                transform: scale(1.08);
+            }
+
+            30% {
+                transform: scale(1);
+            }
+
+            45% {
+                transform: scale(1.05);
+            }
+
+            60% {
+                transform: scale(1);
+            }
+        }
+
+        .subscribe-btn-animated:hover {
+            animation: heartbeat 1.2s ease-in-out infinite;
+            box-shadow:
+                0 0 20px rgba(10, 132, 255, 0.5),
+                0 0 40px rgba(10, 132, 255, 0.3),
+                0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Secure Payment Badge Heartbeat Animation (synced with subscribe button) */
+        @keyframes heartbeat-green {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            15% {
+                transform: scale(1.06);
+            }
+
+            30% {
+                transform: scale(1);
+            }
+
+            45% {
+                transform: scale(1.04);
+            }
+
+            60% {
+                transform: scale(1);
+            }
+        }
+
+        .secure-badge-animated {
+            animation: heartbeat-green 1.2s ease-in-out infinite, glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 5px rgba(52, 199, 89, 0.3), 0 0 10px rgba(52, 199, 89, 0.2);
+                filter: drop-shadow(0 0 4px rgba(52, 199, 89, 0.3));
+            }
+
+            50% {
+                text-shadow: 0 0 15px rgba(52, 199, 89, 0.8), 0 0 30px rgba(52, 199, 89, 0.6), 0 0 45px rgba(52, 199, 89, 0.4);
+                filter: drop-shadow(0 0 15px rgba(52, 199, 89, 0.7));
+            }
         }
 
         /* Utilities */
@@ -245,93 +390,303 @@
     </div>
 
     <!-- AUTHENTICATION UI -->
-    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-        <div
-            class="glass-panel w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6">
+    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
+        <div class="flex flex-col lg:flex-row items-stretch justify-center gap-6 w-full max-w-[1400px] my-8">
 
-            <!-- Header -->
-            <div class="text-center space-y-2">
-                <div
-                    class="w-12 h-12 bg-gradient-to-br from-[#0A84FF] to-[#007AFF] rounded-xl flex items-center justify-center mx-auto shadow-lg shadow-blue-900/40 mb-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M2 12h2.5L7 3l5 18 5-13 2.5 4H22" />
-                    </svg>
+            <!-- LEFT PANEL: How to Use API Key -->
+            <div
+                class="glass-panel w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
+                <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
+                    <h3 class="text-[#0A84FF] text-xl font-bold mb-4 flex items-center gap-2">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path
+                                d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+                        </svg>
+                        How to Use Your Google Vertex API Key
+                    </h3>
+
+                    <div class="space-y-4 text-[14px] leading-relaxed">
+                        <div class="bg-[#2C2C2E] rounded-xl p-4 border border-white/5">
+                            <h4 class="text-[#0A84FF] font-semibold mb-2">1. Create a Vertex AI Project</h4>
+                            <p class="text-[#8E8E93]">Visit the Google Cloud Console, create a new project, and enable
+                                the Vertex AI API.</p>
+                        </div>
+
+                        <div class="bg-[#2C2C2E] rounded-xl p-4 border border-white/5">
+                            <h4 class="text-[#0A84FF] font-semibold mb-2">2. Generate an API Key</h4>
+                            <p class="text-[#8E8E93]">In the APIs & Services section, navigate to Credentials and select
+                                Create API Key.</p>
+                        </div>
+
+                        <div class="bg-[#2C2C2E] rounded-xl p-4 border border-white/5">
+                            <h4 class="text-[#0A84FF] font-semibold mb-2">3. Restrict Your Key for Security</h4>
+                            <p class="text-[#8E8E93] mb-2">To protect your account from unauthorized usage, click
+                                Restrict Key, then:</p>
+                            <ul class="text-[#8E8E93] space-y-1 ml-4">
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#0A84FF] mt-1">•</span>
+                                    Under Application Restrictions, choose IP address restriction.
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#0A84FF] mt-1">•</span>
+                                    Enter the backend IP(s) provided by Chirp Unlimited so that only our secure servers
+                                    can access your key.
+                                </li>
+                                <li class="flex items-start gap-2">
+                                    <span class="text-[#0A84FF] mt-1">•</span>
+                                    Save your settings to lock the key access.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-[#2C2C2E] rounded-xl p-4 border border-white/5">
+                            <h4 class="text-[#0A84FF] font-semibold mb-2">4. Apply the Key in Chirp Unlimited</h4>
+                            <p class="text-[#8E8E93]">Copy your restricted API key and paste it into the "API Key
+                                Settings" section of the app. Once connected, you're ready to start generating without
+                                limits.</p>
+                        </div>
+                    </div>
                 </div>
-                <h2 class="text-2xl font-bold tracking-tight">Welcome to Chirp</h2>
-                <p class="text-[#8E8E93] text-sm">Sign in to access unlimited HD audio generation.</p>
             </div>
 
-            <!-- Auth Form -->
-            <form id="authForm" class="space-y-4">
-                <div class="space-y-4">
-                    <input type="email" id="emailInput" placeholder="Email address" class="auth-input" required>
-                    <input type="password" id="passwordInput" placeholder="Password" class="auth-input" required>
+            <!-- CENTER: Login Form -->
+            <div
+                class="glass-panel w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 flex-shrink-0">
+
+                <!-- Header -->
+                <div class="text-center space-y-2">
+                    <div
+                        class="w-12 h-12 bg-gradient-to-br from-[#0A84FF] to-[#007AFF] rounded-xl flex items-center justify-center mx-auto shadow-lg shadow-blue-900/40 mb-4">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M2 12h2.5L7 3l5 18 5-13 2.5 4H22" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold tracking-tight">Welcome to Chirp</h2>
+                    <p class="text-[#8E8E93] text-sm">Sign in to access unlimited HD audio generation.</p>
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-2 cursor-pointer group">
-                        <div class="relative">
-                            <input type="checkbox" id="rememberMe" class="peer sr-only" checked>
-                            <div
-                                class="w-5 h-5 border-2 border-[#636366] rounded-md peer-checked:bg-[#0A84FF] peer-checked:border-[#0A84FF] transition-all">
+                <!-- Auth Form -->
+                <form id="authForm" class="space-y-4">
+                    <div class="space-y-4">
+                        <input type="email" id="emailInput" placeholder="Email address" class="auth-input" required>
+                        <input type="password" id="passwordInput" placeholder="Password" class="auth-input" required>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <div class="relative">
+                                <input type="checkbox" id="rememberMe" class="peer sr-only" checked>
+                                <div
+                                    class="w-5 h-5 border-2 border-[#636366] rounded-md peer-checked:bg-[#0A84FF] peer-checked:border-[#0A84FF] transition-all">
+                                </div>
+                                <svg class="absolute top-0.5 left-0.5 w-4 h-4 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
                             </div>
-                            <svg class="absolute top-0.5 left-0.5 w-4 h-4 text-white opacity-0 peer-checked:opacity-100 pointer-events-none"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                <polyline points="20 6 9 17 4 12" />
+                            <span class="text-sm text-[#8E8E93] group-hover:text-white transition-colors">Remember
+                                me</span>
+                        </label>
+                        <a href="#" class="text-sm text-[#0A84FF] hover:underline" id="forgotPasswordBtn">Forgot?</a>
+                    </div>
+
+                    <button type="submit" id="authSubmitBtn"
+                        class="w-full bg-[#0A84FF] hover:bg-[#0062CC] text-white font-semibold py-3 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="relative flex items-center py-2">
+                    <div class="flex-grow border-t border-[#38383A]"></div>
+                    <span class="flex-shrink-0 mx-4 text-[#636366] text-xs uppercase tracking-wider">Or continue
+                        with</span>
+                    <div class="flex-grow border-t border-[#38383A]"></div>
+                </div>
+
+                <!-- Google Sign In -->
+                <button id="googleSignInBtn" type="button"
+                    class="w-full bg-white text-black font-medium py-3 rounded-xl transition-all hover:bg-gray-100 active:scale-[0.98] flex items-center justify-center gap-3">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path
+                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                            fill="#4285F4" />
+                        <path
+                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                            fill="#34A853" />
+                        <path
+                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.26-.19-.58z"
+                            fill="#FBBC05" />
+                        <path
+                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                            fill="#EA4335" />
+                    </svg>
+                    <span>Google</span>
+                </button>
+
+                <!-- Toggle Mode -->
+                <div class="text-center mt-2">
+                    <span class="text-[#8E8E93] text-sm" id="authToggleText">Don't have an account?</span>
+                    <button id="authToggleBtn" type="button"
+                        class="text-[#0A84FF] text-sm font-medium hover:underline ml-1">Sign up</button>
+                </div>
+
+                <div id="authErrorMsg" class="text-[#FF453A] text-sm text-center hidden mt-2 break-words"></div>
+            </div>
+
+            <!-- RIGHT PANEL: Chirp Unlimited Features -->
+            <div
+                class="glass-panel w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
+                <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div
+                            class="w-10 h-10 bg-gradient-to-br from-[#0A84FF] to-[#007AFF] rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/40">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                             </svg>
                         </div>
-                        <span class="text-sm text-[#8E8E93] group-hover:text-white transition-colors">Remember me</span>
-                    </label>
-                    <a href="#" class="text-sm text-[#0A84FF] hover:underline" id="forgotPasswordBtn">Forgot?</a>
+                        <h3 class="text-[#0A84FF] text-xl font-bold">Chirp Unlimited</h3>
+                    </div>
+
+                    <p class="text-white text-[15px] font-medium mb-3">Unlock Limitless Creativity</p>
+
+                    <p class="text-[#8E8E93] text-[13px] leading-relaxed mb-4">
+                        Chirp Unlimited empowers you to generate unlimited-length content effortlessly using your own
+                        API key. Whether you're a writer, developer, or creative professional, this platform removes
+                        restrictive token and length limits by integrating directly with Google Vertex AI through a
+                        secure and customizable interface.
+                    </p>
+
+                    <p class="text-[#8E8E93] text-[13px] leading-relaxed mb-5">
+                        With Chirp Unlimited, you stay in control — simply connect your own Vertex API key to enjoy full
+                        access to extended text generation, powerful creative workflows, and complete privacy over your
+                        data. Say goodbye to generation caps and experience the true potential of large language models
+                        without artificial limits.
+                    </p>
+
+                    <h4 class="text-[#0A84FF] font-semibold text-[14px] mb-3 flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polygon
+                                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                        Key Features
+                    </h4>
+
+                    <div class="space-y-3 mb-5">
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-[#0A84FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A84FF"
+                                    stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-white text-[13px] font-medium">Unlimited Text Generation</span>
+                                <p class="text-[#636366] text-[12px]">Write without cutoffs — perfect for novels,
+                                    conversation agents, or technical documentation.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-[#0A84FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A84FF"
+                                    stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-white text-[13px] font-medium">Full User Control</span>
+                                <p class="text-[#636366] text-[12px]">You own the API usage, cost tracking, and privacy
+                                    — 100% transparent.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-[#0A84FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A84FF"
+                                    stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-white text-[13px] font-medium">Secure API Handling</span>
+                                <p class="text-[#636366] text-[12px]">Encrypted, server-side proxying ensures your key
+                                    stays safe and never exposed to browsers.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-[#0A84FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A84FF"
+                                    stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-white text-[13px] font-medium">Google Vertex AI Powered</span>
+                                <p class="text-[#636366] text-[12px]">Harness world-class language models optimized for
+                                    reliability and speed.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-[#0A84FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A84FF"
+                                    stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-white text-[13px] font-medium">Effortless Integration</span>
+                                <p class="text-[#636366] text-[12px]">Simple setup, guided onboarding, and instant
+                                    start.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div
+                                class="w-6 h-6 rounded-full bg-[#0A84FF]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0A84FF"
+                                    stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12" />
+                                </svg>
+                            </div>
+                            <div>
+                                <span class="text-white text-[13px] font-medium">Custom Prompts & Workflows</span>
+                                <p class="text-[#636366] text-[12px]">Design your own AI behaviors for structured
+                                    creative output.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-gradient-to-r from-[#0A84FF]/10 to-[#007AFF]/10 rounded-xl p-4 border border-[#0A84FF]/20">
+                        <h4 class="text-[#0A84FF] font-semibold text-[14px] mb-2">Why Choose Chirp Unlimited?</h4>
+                        <p class="text-[#8E8E93] text-[12px] leading-relaxed">
+                            Experience freedom from generation caps, flexible API control, and enterprise-grade
+                            performance — all in one sleek interface. Chirp Unlimited turns your imagination into output
+                            without limits, delays, or restrictions.
+                        </p>
+                    </div>
                 </div>
-
-                <button type="submit" id="authSubmitBtn"
-                    class="w-full bg-[#0A84FF] hover:bg-[#0062CC] text-white font-semibold py-3 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20">
-                    Sign In
-                </button>
-            </form>
-
-            <!-- Divider -->
-            <div class="relative flex items-center py-2">
-                <div class="flex-grow border-t border-[#38383A]"></div>
-                <span class="flex-shrink-0 mx-4 text-[#636366] text-xs uppercase tracking-wider">Or continue with</span>
-                <div class="flex-grow border-t border-[#38383A]"></div>
             </div>
 
-            <!-- Google Sign In -->
-            <button id="googleSignInBtn" type="button"
-                class="w-full bg-white text-black font-medium py-3 rounded-xl transition-all hover:bg-gray-100 active:scale-[0.98] flex items-center justify-center gap-3">
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                    <path
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        fill="#4285F4" />
-                    <path
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        fill="#34A853" />
-                    <path
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.26-.19-.58z"
-                        fill="#FBBC05" />
-                    <path
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                        fill="#EA4335" />
-                </svg>
-                <span>Google</span>
-            </button>
-
-            <!-- Toggle Mode -->
-            <div class="text-center mt-2">
-                <span class="text-[#8E8E93] text-sm" id="authToggleText">Don't have an account?</span>
-                <button id="authToggleBtn" type="button"
-                    class="text-[#0A84FF] text-sm font-medium hover:underline ml-1">Sign up</button>
-            </div>
-
-            <div id="authErrorMsg" class="text-[#FF453A] text-sm text-center hidden mt-2 break-words"></div>
         </div>
     </div>
 
+
     <!-- PAYWALL UI (Shown after Login if no subscription) -->
-    <div id="paywallContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+    <div id="paywallContainer"
+        class="fixed inset-0 z-50 flex flex-col items-center justify-start p-4 pt-8 overflow-y-auto hidden">
         <div
             class="glass-panel w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 text-center">
             <div
@@ -356,20 +711,132 @@
                     <span class="text-[#8E8E93] text-lg mb-1">/mo</span>
                 </div>
             </div>
+            <!-- Subscribe Button -->
+            <div id="subscribeBtnContainer" class="relative w-full">
+                <div id="subscribeGlow"
+                    class="absolute inset-0 rounded-xl pointer-events-none opacity-0 transition-opacity duration-200"
+                    style="background: radial-gradient(circle 40px, rgba(100, 180, 255, 0.5) 0%, transparent 70%);">
+                </div>
+                <button id="subscribeBtn"
+                    class="subscribe-btn-animated relative w-full bg-[#0A84FF] hover:bg-[#0062CC] text-white font-semibold py-3 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2 z-10">
+                    <span>Subscribe Now</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                        <polyline points="9 18 15 12 9 6" />
+                    </svg>
+                </button>
+            </div>
 
-            <button id="subscribeBtn"
-                class="w-full bg-[#0A84FF] hover:bg-[#0062CC] text-white font-semibold py-3 rounded-xl transition-all active:scale-[0.98] shadow-lg shadow-blue-900/20 flex items-center justify-center gap-2">
-                <span>Subscribe Now</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                    <polyline points="9 18 15 12 9 6" />
-                </svg>
-            </button>
+            <!-- Secure Payment Badge -->
+            <div id="securePaymentBadge"
+                class="flex items-center justify-center gap-2 py-2 transition-all duration-200">
+                <div class="w-5 h-5 rounded-full bg-[#34C759]/20 flex items-center justify-center">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                </div>
+                <span class="text-[#34C759] text-xs font-semibold tracking-wide uppercase">Secure Payment with
+                    Stripe</span>
+            </div>
 
             <p id="checkoutStatus" class="text-xs text-[#8E8E93] hidden"></p>
 
             <button id="signOutFromPaywallBtn" class="text-sm text-[#8E8E93] hover:text-white transition-colors mt-2">
                 Sign Out
             </button>
+        </div>
+
+        <!-- Feature Info Panel with Dissolve Animation -->
+        <div id="subscribeInfoPanel"
+            class="glass-panel w-full max-w-[800px] p-8 rounded-2xl mt-8 mb-8 opacity-0 transition-opacity duration-1000"
+            style="animation: dissolveIn 1.5s ease-out 0.5s forwards;">
+            <style>
+                @keyframes dissolveIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(10px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+
+            <!-- Section 1: Unlimited Access -->
+            <div class="flex gap-4 mb-6">
+                <div class="w-8 h-8 rounded-full bg-[#34C759]/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-[#0A84FF] font-semibold text-base mb-2">Unlimited Access & Full Control</h4>
+                    <p class="text-white/80 text-sm leading-relaxed">Subscribe to Chirp Unlimited and unleash your
+                        creative potential without boundaries. By joining, you gain unlimited access to powerful,
+                        extended-length content generation using your personal Google Vertex AI API key, giving you
+                        complete control over your data and costs.</p>
+                </div>
+            </div>
+
+            <!-- Section 2: Advanced Downloads -->
+            <div class="flex gap-4 mb-6">
+                <div class="w-8 h-8 rounded-full bg-[#34C759]/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-[#0A84FF] font-semibold text-base mb-2">Advanced Download Capabilities</h4>
+                    <p class="text-white/80 text-sm leading-relaxed">Our platform offers advanced download capabilities,
+                        allowing you to save your generated content as separate audio chunks or combine them into a
+                        single, unified WAV-quality audio file. This flexibility ensures you can easily manage, share,
+                        and use your creations.</p>
+                </div>
+            </div>
+
+            <!-- Section 3: Security & Speed -->
+            <div class="flex gap-4 mb-6">
+                <div class="w-8 h-8 rounded-full bg-[#34C759]/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-[#0A84FF] font-semibold text-base mb-2">Enhanced Speed, Reliability & Security</h4>
+                    <p class="text-white/80 text-sm leading-relaxed">With a subscription, your API key always stays in
+                        your hands. Chirp Unlimited never stores your key—neither in the browser, nor on our servers—so
+                        you remain in complete control of your security at all times. Every request is used only when
+                        you trigger it, giving you maximum protection and peace of mind.</p>
+                    <p class="text-white/80 text-sm leading-relaxed mt-2">By keeping your credentials entirely under
+                        your ownership, Chirp Unlimited lets you enjoy powerful, unlimited generation without
+                        sacrificing privacy or safety. You stay in charge of your own API, your costs, and your data—no
+                        long-term storage, no hidden access, just full control and transparent usage.</p>
+                </div>
+            </div>
+
+            <!-- Section 4: Community -->
+            <div class="flex gap-4">
+                <div class="w-8 h-8 rounded-full bg-[#34C759]/20 flex items-center justify-center flex-shrink-0 mt-1">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-[#0A84FF] font-semibold text-base mb-2">Join Our Growing Community</h4>
+                    <p class="text-white/80 text-sm leading-relaxed">Make the smart choice today: subscribe to Chirp
+                        Unlimited and join a growing community of writers, developers, and creators breaking free from
+                        limitations. No more frustrating cut-offs or hidden limits—just pure, limitless AI-powered
+                        inspiration. <span class="text-[#0A84FF] font-medium">Your imagination, unleashed.</span></p>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -488,7 +955,7 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                             <polygon points="5 3 19 12 5 21 5 3"></polygon>
                         </svg>
-                        <span>Synthesize & Play</span>
+                        <span>Synthesize &amp; Play</span>
                     </button>
                 </div>
             </div>
@@ -530,7 +997,8 @@
                 <!-- Center: Text Info (Absolutely Centered) -->
                 <div
                     class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col overflow-hidden text-center max-w-[60%]">
-                    <span class="text-[10px] text-[#8E8E93] font-medium uppercase tracking-wide">Now Playing</span>
+                    <span class="text-[10px] text-[#8E8E93] font-medium uppercase tracking-wide">Now
+                        Playing</span>
                     <div class="flex items-center justify-center gap-2">
                         <span class="text-white font-semibold text-base truncate">Chunk <span
                                 id="currentChunkDisplay">1</span> / <span id="totalChunkDisplay">--</span></span>
@@ -917,34 +1385,42 @@
 
             updateCheckoutStatus('Creating checkout session...');
 
-            console.log('Starting checkout for user:', currentUser.uid);
 
             let unsubscribe = null;
             let timeoutId = null;
 
             try {
+                // Fetch Stripe price ID from Firestore config (easier to update without code changes)
+                let priceId = 'price_1SayKJP8wD9gpFgdphN53HZw'; // Fallback default
+                try {
+                    const configDoc = await getDoc(doc(db, 'config', 'stripe'));
+                    if (configDoc.exists() && configDoc.data().priceId) {
+                        priceId = configDoc.data().priceId;
+                    }
+                } catch (configError) {
+                    console.warn('Could not fetch price config, using default:', configError.message);
+                }
+
                 // Create a checkout session document
                 // The Stripe extension will detect this and populate it with the checkout URL
                 const checkoutSessionRef = collection(db, 'customers', currentUser.uid, 'checkout_sessions');
 
                 const sessionData = {
-                    price: 'price_1SayKJP8wD9gpFgdphN53HZw', // Your Stripe Price ID
+                    price: priceId,
                     success_url: window.location.origin + window.location.pathname + '?checkout=success',
                     cancel_url: window.location.origin + window.location.pathname + '?checkout=cancelled',
                     mode: 'subscription', // Required for subscriptions
                     allow_promotion_codes: true,
                 };
 
-                console.log('Creating checkout session with data:', sessionData);
 
                 const docRef = await addDoc(checkoutSessionRef, sessionData);
 
-                console.log('Checkout session document created:', docRef.id);
                 updateCheckoutStatus('Waiting for Stripe...');
 
                 // Set a timeout for the checkout session creation
                 timeoutId = setTimeout(() => {
-                    console.error('Checkout session timed out');
+
                     updateCheckoutStatus('Checkout timed out. Please try again.', true);
                     subscribeBtn.disabled = false;
                     subscribeBtn.innerHTML = originalHTML;
@@ -954,10 +1430,9 @@
                 // Listen for the extension to update the document with the checkout URL
                 unsubscribe = onSnapshot(docRef, (snap) => {
                     const data = snap.data();
-                    console.log('Checkout session update:', data);
+
 
                     if (!data) {
-                        console.log('No data yet, waiting...');
                         return;
                     }
 
@@ -965,7 +1440,7 @@
 
                     if (error) {
                         // Extension returned an error
-                        console.error("Stripe Extension Error:", error);
+
                         clearTimeout(timeoutId);
                         updateCheckoutStatus(`Error: ${error.message || error}`, true);
                         subscribeBtn.disabled = false;
@@ -976,7 +1451,7 @@
 
                     if (url) {
                         // Success! Redirect to Stripe Checkout
-                        console.log('Redirecting to Stripe checkout:', url);
+
                         clearTimeout(timeoutId);
                         updateCheckoutStatus('Redirecting to Stripe...');
                         if (unsubscribe) unsubscribe();
@@ -986,11 +1461,11 @@
 
                     // If sessionId exists but no URL yet, still waiting
                     if (sessionId) {
-                        console.log('Session ID received, waiting for URL:', sessionId);
+
                         updateCheckoutStatus('Processing...');
                     }
                 }, (error) => {
-                    console.error('Snapshot error:', error);
+
                     clearTimeout(timeoutId);
                     updateCheckoutStatus(`Listener error: ${error.message}`, true);
                     subscribeBtn.disabled = false;
@@ -998,7 +1473,7 @@
                 });
 
             } catch (err) {
-                console.error("Checkout failed:", err);
+
                 if (timeoutId) clearTimeout(timeoutId);
                 if (unsubscribe) unsubscribe();
 
@@ -1039,7 +1514,7 @@
                     throw new Error('No portal URL returned');
                 }
             } catch (err) {
-                console.error("Portal link failed:", err);
+
 
                 // Fallback: Try without the 'ext-firestore-stripe-payments-' prefix
                 try {
@@ -1053,7 +1528,7 @@
                         return;
                     }
                 } catch (err2) {
-                    console.error("Fallback portal link also failed:", err2);
+
                 }
 
                 alert("Failed to open billing portal. Please contact support.");
@@ -1066,11 +1541,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const checkoutResult = urlParams.get('checkout');
         if (checkoutResult === 'success') {
-            console.log('Checkout was successful!');
+
             // Clean up the URL
             window.history.replaceState({}, document.title, window.location.pathname);
         } else if (checkoutResult === 'cancelled') {
-            console.log('Checkout was cancelled');
+
             window.history.replaceState({}, document.title, window.location.pathname);
         }
 
@@ -2079,6 +2554,172 @@
                 // els.audio.pause();
             }
         });
+
+        // ====== SUBSCRIBE BUTTON PARTICLE ANIMATION ======
+        (function initSubscribeParticles() {
+            const container = document.getElementById('subscribeBtnContainer');
+            const canvas = document.getElementById('subscribeParticleCanvas');
+            const glowEl = document.getElementById('subscribeGlow');
+            const btn = document.getElementById('subscribeBtn');
+
+            if (!container || !canvas || !btn) return;
+
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            let isHovering = false;
+            let animationId = null;
+            let mouseX = 0, mouseY = 0;
+
+            // Resize canvas
+            function resizeCanvas() {
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width + 80;
+                canvas.height = rect.height + 80;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            // Particle class
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+
+                reset() {
+                    // Get button dimensions
+                    const btnRect = btn.getBoundingClientRect();
+
+                    // Canvas center is at 40px offset (margin), button fills container
+                    // Spawn particles covering the full button area
+                    const centerX = 40 + btnRect.width / 2;
+                    const centerY = 40 + btnRect.height / 2;
+
+                    // Random position covering the full button area (centered)
+                    this.x = 40 + Math.random() * btnRect.width;
+                    this.y = 40 + Math.random() * btnRect.height;
+
+                    // Random direction outward with increased speed for farther reach (~1 inch more)
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 1.0 + Math.random() * 2.5; // Increased speed for farther emission
+                    this.vx = Math.cos(angle) * speed;
+                    this.vy = Math.sin(angle) * speed;
+
+                    this.size = 1 + Math.random() * 4; // 1-5 pixels
+                    this.life = 1;
+                    this.decay = 0.015 + Math.random() * 0.02; // Slower decay for longer travel
+
+                    // Blue color matching button
+                    this.hue = 210 + Math.random() * 20;
+                    this.saturation = 90 + Math.random() * 10;
+                    this.lightness = 50 + Math.random() * 20;
+                }
+
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.life -= this.decay;
+
+                    // Wave motion
+                    this.x += Math.sin(Date.now() * 0.01 + this.y * 0.1) * 0.3;
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+                    ctx.fillStyle = `hsla(${this.hue}, ${this.saturation}%, ${this.lightness}%, ${this.life * 0.8})`;
+                    ctx.fill();
+                }
+            }
+
+            // Animation loop
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Add new particles only when hovering
+                if (isHovering && particles.length < 60) {
+                    particles.push(new Particle());
+                    particles.push(new Particle());
+                }
+
+                // Update and draw particles (with faster decay when not hovering for smooth dissolve)
+                particles = particles.filter(p => {
+                    p.update();
+                    // Faster decay when cursor leaves for smooth dissolve effect
+                    if (!isHovering) {
+                        p.life -= 0.04;
+                    }
+                    if (p.life > 0) {
+                        p.draw();
+                        return true;
+                    }
+                    return false;
+                });
+
+                // Always continue animation if there are particles remaining
+                if (particles.length > 0 || isHovering) {
+                    animationId = requestAnimationFrame(animate);
+                } else {
+                    // Clear canvas and reset animationId when all particles are gone
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    animationId = null;
+                }
+            }
+
+            // Cursor glow effect
+            function updateGlow(e) {
+                if (!isHovering) return;
+
+                const rect = btn.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+
+                glowEl.style.background = `radial-gradient(circle 50px at ${mouseX}px ${mouseY}px, rgba(100, 180, 255, 0.6) 0%, transparent 70%)`;
+            }
+
+            // Event listeners
+            btn.addEventListener('mouseenter', () => {
+                isHovering = true;
+                glowEl.style.opacity = '1';
+                // Only start animation if not already running
+                if (!animationId) {
+                    animate();
+                }
+                // Animate secure payment badge in sync
+                const secureBadge = document.getElementById('securePaymentBadge');
+                if (secureBadge) {
+                    secureBadge.classList.add('secure-badge-animated');
+                }
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                isHovering = false;
+                glowEl.style.opacity = '0';
+                // Don't cancel animation - let particles dissolve smoothly
+                // Remove secure payment badge animation
+                const secureBadge = document.getElementById('securePaymentBadge');
+                if (secureBadge) {
+                    secureBadge.classList.remove('secure-badge-animated');
+                }
+            });
+
+            btn.addEventListener('mousemove', updateGlow);
+        })();
+
+        // ====== SECURE BADGE GLOW (Separate handler in case particle system is disabled) ======
+        (function initSecureBadgeGlow() {
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            const secureBadge = document.getElementById('securePaymentBadge');
+
+            if (!subscribeBtn || !secureBadge) return;
+
+            subscribeBtn.addEventListener('mouseenter', () => {
+                secureBadge.classList.add('secure-badge-animated');
+            });
+
+            subscribeBtn.addEventListener('mouseleave', () => {
+                secureBadge.classList.remove('secure-badge-animated');
+            });
+        })();
 
     </script>
 </body>

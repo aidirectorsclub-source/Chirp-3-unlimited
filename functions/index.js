@@ -44,6 +44,47 @@ exports.makeAdmin = onCall({ region: "europe-west3" }, async (request) => {
         throw new HttpsError("unauthenticated", "You must be signed in to call this function.");
     }
 
+    // Verify caller is already an admin before allowing them to grant admin privileges
+    if (context.token?.admin !== true) {
+        throw new HttpsError("permission-denied", "Only admins can create other admins.");
+    }
+
+    // Rate limiting: 5 requests per minute per user
+    const rateLimitRef = admin.firestore().collection('rateLimits').doc(context.uid);
+    const now = Date.now();
+    const windowMs = 60000; // 1 minute
+    const maxRequests = 5;
+
+    try {
+        const rateLimitDoc = await rateLimitRef.get();
+
+        if (rateLimitDoc.exists) {
+            const rateData = rateLimitDoc.data();
+            // Filter requests within the time window
+            const recentRequests = (rateData.requests || []).filter(
+                timestamp => now - timestamp < windowMs
+            );
+
+            if (recentRequests.length >= maxRequests) {
+                throw new HttpsError("resource-exhausted", "Rate limit exceeded. Please wait before trying again.");
+            }
+
+            // Update with new request timestamp
+            await rateLimitRef.update({
+                requests: [...recentRequests, now]
+            });
+        } else {
+            // First request from this user
+            await rateLimitRef.set({ requests: [now] });
+        }
+    } catch (rateLimitError) {
+        if (rateLimitError.code === "resource-exhausted") {
+            throw rateLimitError;
+        }
+        // Log but don't block if rate limit check fails
+        console.warn("Rate limit check failed:", rateLimitError.message);
+    }
+
     const email = data?.email;
     if (!email) {
         throw new HttpsError("invalid-argument", "Email is required.");
