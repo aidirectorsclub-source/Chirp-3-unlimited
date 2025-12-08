@@ -260,6 +260,22 @@
             }
         }
 
+        @keyframes scaleInDissolve {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .scale-in-appear {
+            animation: scaleInDissolve 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
         .secure-badge-animated {
             animation: heartbeat-green 1.2s ease-in-out infinite, glowPulse 2s ease-in-out infinite;
         }
@@ -395,7 +411,7 @@
 
             <!-- LEFT PANEL: How to Use API Key -->
             <div
-                class="glass-panel w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
+                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
                 <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
                     <h3 class="text-[#0A84FF] text-xl font-bold mb-4 flex items-center gap-2">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -452,7 +468,7 @@
 
             <!-- CENTER: Login Form -->
             <div
-                class="glass-panel w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 flex-shrink-0">
+                class="glass-panel scale-in-appear w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 flex-shrink-0">
 
                 <!-- Header -->
                 <div class="text-center space-y-2">
@@ -538,7 +554,7 @@
 
             <!-- RIGHT PANEL: Chirp Unlimited Features -->
             <div
-                class="glass-panel w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
+                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
                 <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
                     <div class="flex items-center gap-3 mb-4">
                         <div
@@ -688,7 +704,7 @@
     <div id="paywallContainer"
         class="fixed inset-0 z-50 flex flex-col items-center justify-start p-4 pt-8 overflow-y-auto hidden">
         <div
-            class="glass-panel w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 text-center">
+            class="glass-panel scale-in-appear w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 text-center">
             <div
                 class="w-16 h-16 bg-[#0A84FF]/20 text-[#0A84FF] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -748,22 +764,7 @@
         </div>
 
         <!-- Feature Info Panel with Dissolve Animation -->
-        <div id="subscribeInfoPanel"
-            class="glass-panel w-full max-w-[800px] p-8 rounded-2xl mt-8 mb-8 opacity-0 transition-opacity duration-1000"
-            style="animation: dissolveIn 1.5s ease-out 0.5s forwards;">
-            <style>
-                @keyframes dissolveIn {
-                    from {
-                        opacity: 0;
-                        transform: translateY(10px);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            </style>
+        <div id="subscribeInfoPanel" class="glass-panel scale-in-appear w-full max-w-[800px] p-8 rounded-2xl mt-8 mb-8">
 
             <!-- Section 1: Unlimited Access -->
             <div class="flex gap-4 mb-6">
@@ -843,7 +844,8 @@
     <!-- MAIN APP UI (Initially Hidden) -->
     <div id="appContainer" class="flex-1 flex flex-col h-full w-full hidden opacity-0 transition-opacity duration-500">
         <!-- Header -->
-        <header class="absolute top-0 w-full z-50 glass-panel border-b-0 px-6 py-4 flex items-center justify-between">
+        <header
+            class="absolute top-0 w-full z-50 glass-panel scale-in-appear border-b-0 px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div
                     class="bg-gradient-to-br from-[#0A84FF] to-[#007AFF] text-white w-8 h-8 flex items-center justify-center rounded-lg shadow-lg shadow-blue-900/40">
@@ -872,7 +874,8 @@
         </header>
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-20 pb-0 px-4 gap-4 h-full overflow-hidden z-10">
+        <main
+            class="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-20 pb-0 px-4 gap-4 h-full overflow-hidden z-10 scale-in-appear">
 
             <!-- Grouped Settings -->
             <div class="bg-[#1C1C1E] rounded-2xl border border-white/5 shrink-0 z-40 relative">
