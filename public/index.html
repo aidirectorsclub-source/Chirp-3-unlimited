@@ -1077,38 +1077,7 @@
             window.history.replaceState({}, document.title, window.location.pathname);
         }
 
-        // ============================================
-        // TEMPORARY ADMIN BUTTON - REMOVE AFTER USE
-        // ============================================
-        async function giveMeAdmin() {
-            try {
-                const makeAdmin = httpsCallable(functions, "makeAdmin");
-                const result = await makeAdmin({ email: "farbod376@gmail.com" });
-                console.log("Admin result:", result.data);
-                alert("Admin claim set! Sign out and back in for changes to take effect.");
-            } catch (error) {
-                console.error("Error setting admin:", error);
-                alert("Error: " + (error.message || error));
-            }
-        }
-
-        // Create and inject the admin button
-        const adminBtnContainer = document.createElement('div');
-        adminBtnContainer.id = 'tempAdminBtn';
-        adminBtnContainer.style.cssText = 'position:fixed;top:10px;left:10px;z-index:9999;';
-        adminBtnContainer.innerHTML = `
-            <button onclick="window.giveMeAdminFn()" style="background:#FF453A;color:white;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;font-weight:bold;font-size:14px;">
-                🔑 Make me admin
-            </button>
-        `;
-        document.body.appendChild(adminBtnContainer);
-
-        // Expose the function globally so the onclick can call it
-        window.giveMeAdminFn = giveMeAdmin;
-        // ============================================
-
     </script>
-
     <script>
         // --- Voice Dropdown System ---
         (function () {
