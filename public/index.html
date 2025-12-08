@@ -853,7 +853,7 @@
                     </svg>
                 </div>
                 <div>
-                    <h1 class="font-semibold text-lg leading-tight tracking-tight">Chirp Reader</h1>
+                    <h1 class="font-semibold text-lg leading-tight tracking-tight">Chirp Unlimited</h1>
                 </div>
             </div>
             <div class="flex items-center gap-3">
@@ -1822,7 +1822,7 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        let mouse = { x: null, y: null, radius: 120 }
+        let mouse = { x: null, y: null, radius: 120, radiusSq: 14400 }
 
         window.addEventListener('mousemove', (e) => {
             mouse.x = e.clientX;
@@ -1843,20 +1843,20 @@
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
-                ctx.shadowBlur = 5;
-                ctx.shadowColor = "white";
                 ctx.fill();
-                ctx.shadowBlur = 0;
             }
             update() {
                 if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
                 if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
 
+                // Optimization: Use squared distance to avoid expensive sqrt() on every frame
                 let dx = mouse.x - this.x;
                 let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
+                let distanceSq = dx * dx + dy * dy;
 
-                if (distance < mouse.radius) {
+                if (distanceSq < mouse.radiusSq) {
+                    // Only calculate exact distance if within range
+                    let distance = Math.sqrt(distanceSq);
                     const forceDirectionX = dx / distance;
                     const forceDirectionY = dy / distance;
                     const force = (mouse.radius - distance) / mouse.radius;
@@ -1880,42 +1880,46 @@
 
         function initParticles() {
             particlesArray = [];
-            // Adaptive particle count based on device performance
+            // Optimized particle count for better performance/memory usage
             const isMobile = window.innerWidth < 768;
             const isLowPower = navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4;
-            let numberOfParticles = isMobile ? 500 : (isLowPower ? 1000 : 1500);
+            // Reduced counts slightly to ensure stable 60fps on all devices
+            let numberOfParticles = isMobile ? 300 : (isLowPower ? 600 : 1000);
 
             for (let i = 0; i < numberOfParticles; i++) {
                 let size = (Math.random() * 1.5) + 0.5;
                 let x = Math.random() * (canvas.width - size * 2) + size * 2;
                 let y = Math.random() * (canvas.height - size * 2) + size * 2;
-                let directionX = (Math.random() * 0.8) - 0.4;
-                let directionY = (Math.random() * 0.8) - 0.4;
+                // Reduce speed by 35% (0.8 -> 0.52, 0.4 -> 0.26)
+                let directionX = (Math.random() * 0.52) - 0.26;
+                let directionY = (Math.random() * 0.52) - 0.26;
                 particlesArray.push(new Particle(x, y, directionX, directionY, size));
             }
         }
 
-        // Optimized animation with frame skipping for performance
+        // Optimized animation loop
         let frameCount = 0;
         let lastTime = 0;
-        const targetFPS = 30;
+        const targetFPS = 60; // Upgraded to 60fps
         const frameInterval = 1000 / targetFPS;
 
         function animateParticles(currentTime) {
             requestAnimationFrame(animateParticles);
 
-            // Frame rate limiting for smoother performance
-            if (currentTime - lastTime < frameInterval) return;
-            lastTime = currentTime;
+            // Frame rate limiting using delta time
+            const deltaTime = currentTime - lastTime;
+            if (deltaTime < frameInterval) return;
+
+            // Adjust for catch-up but limit to one frame skip to avoid stutter
+            lastTime = currentTime - (deltaTime % frameInterval);
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Batch draw operations
-            ctx.save();
-            for (let i = 0; i < particlesArray.length; i++) {
+            // Batch update using cached length for performance
+            const len = particlesArray.length;
+            for (let i = 0; i < len; i++) {
                 particlesArray[i].update();
             }
-            ctx.restore();
         }
 
         initParticles();
