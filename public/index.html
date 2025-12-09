@@ -402,6 +402,114 @@
             outline: 2px solid #0A84FF;
             outline-offset: 2px;
         }
+
+        /* Pressure Shake for Play Button */
+        @keyframes pressureShake {
+            0% {
+                transform: scale(0.98) translate(1px, 1px);
+            }
+
+            10% {
+                transform: scale(0.98) translate(-1px, -1px);
+            }
+
+            20% {
+                transform: scale(0.98) translate(-2px, 0px);
+            }
+
+            30% {
+                transform: scale(0.98) translate(2px, 1px);
+            }
+
+            40% {
+                transform: scale(0.98) translate(1px, -1px);
+            }
+
+            50% {
+                transform: scale(0.98) translate(-1px, 2px);
+            }
+
+            60% {
+                transform: scale(0.98) translate(-2px, 1px);
+            }
+
+            70% {
+                transform: scale(0.98) translate(2px, 1px);
+            }
+
+            80% {
+                transform: scale(0.98) translate(-1px, -1px);
+            }
+
+            90% {
+                transform: scale(0.98) translate(1px, 2px);
+            }
+
+            100% {
+                transform: scale(0.98) translate(1px, -2px);
+            }
+        }
+
+        .pressure-button:hover {
+            transform: scale(0.98);
+        }
+
+        /* Particles */
+        .pressure-particle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background-color: #0A84FF;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 1;
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+            box-shadow: 0 0 4px #0A84FF;
+        }
+
+        /* ========== RESPONSIVE WEB DESIGN ========== */
+
+        /* Fluid Typography Base */
+        html {
+            font-size: clamp(14px, 1.5vw + 0.5rem, 16px);
+        }
+
+        /* Medium screens (tablets) */
+        @media (max-width: 768px) {
+            .glass-panel {
+                border-width: 16px !important;
+            }
+        }
+
+        /* Small screens (mobile) */
+        @media (max-width: 640px) {
+            .glass-panel {
+                border-width: 12px !important;
+                border-radius: 24px !important;
+            }
+
+            .auth-input {
+                padding: 10px 14px;
+                font-size: 14px;
+                border-width: 6px;
+                border-radius: 12px;
+            }
+        }
+
+        /* Extra small screens (small phones) */
+        @media (max-width: 480px) {
+            .glass-panel {
+                border-width: 8px !important;
+                border-radius: 20px !important;
+            }
+
+            .auth-input {
+                padding: 8px 12px;
+                font-size: 13px;
+                border-width: 4px;
+            }
+        }
     </style>
 </head>
 
@@ -421,13 +529,15 @@
     </div>
 
     <!-- AUTHENTICATION UI -->
-    <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-        <div class="flex flex-col lg:flex-row items-stretch justify-center gap-16 w-full max-w-[1400px] my-8">
+    <div id="authContainer"
+        class="fixed inset-0 z-50 flex items-start justify-center p-4 pt-8 sm:pt-4 hidden overflow-y-auto">
+        <div
+            class="flex flex-col lg:flex-row items-stretch justify-center gap-4 sm:gap-8 lg:gap-16 w-full max-w-[1400px] mx-auto my-4 sm:my-8">
 
             <!-- LEFT PANEL: How to Use API Key -->
             <div
-                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-[48px] shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
-                <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
+                class="glass-panel scale-in-appear w-full lg:w-[380px] p-4 sm:p-6 rounded-3xl sm:rounded-[48px] shadow-2xl relative overflow-hidden flex-shrink-0 order-2 lg:order-1">
+                <div class="custom-scroll overflow-y-auto max-h-[50vh] lg:max-h-[70vh] pr-2">
                     <h3 class="text-[#0A84FF] text-xl font-bold mb-4 flex items-center gap-2">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
@@ -491,7 +601,7 @@
 
             <!-- CENTER: Login Form -->
             <div
-                class="glass-panel scale-in-appear w-full max-w-[400px] p-8 rounded-[48px] shadow-2xl relative overflow-hidden flex flex-col gap-6 flex-shrink-0">
+                class="glass-panel scale-in-appear w-full max-w-[400px] p-4 sm:p-8 rounded-3xl sm:rounded-[48px] shadow-2xl relative overflow-hidden flex flex-col gap-4 sm:gap-6 flex-shrink-0 order-1 lg:order-2 mx-auto">
 
                 <!-- Header -->
                 <div class="text-center space-y-2">
@@ -577,8 +687,8 @@
 
             <!-- RIGHT PANEL: Chirp Unlimited Features -->
             <div
-                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-[48px] shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
-                <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
+                class="glass-panel scale-in-appear w-full lg:w-[380px] p-4 sm:p-6 rounded-3xl sm:rounded-[48px] shadow-2xl relative overflow-hidden flex-shrink-0 order-3 lg:order-3">
+                <div class="custom-scroll overflow-y-auto max-h-[50vh] lg:max-h-[70vh] pr-2">
                     <div class="flex items-center gap-3 mb-4">
                         <div
                             class="w-10 h-10 bg-gradient-to-br from-[#0A84FF] to-[#007AFF] rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/40">
@@ -725,9 +835,9 @@
 
     <!-- PAYWALL UI (Shown after Login if no subscription) -->
     <div id="paywallContainer"
-        class="fixed inset-0 z-50 flex flex-col items-center justify-start p-4 pt-8 overflow-y-auto hidden">
+        class="fixed inset-0 z-50 flex flex-col items-center justify-start p-2 sm:p-4 pt-8 sm:pt-8 overflow-y-auto hidden">
         <div
-            class="glass-panel scale-in-appear w-full max-w-[400px] p-6 rounded-[48px] shadow-2xl relative overflow-hidden flex flex-col gap-4 text-center">
+            class="glass-panel scale-in-appear w-full max-w-[400px] p-4 sm:p-6 rounded-3xl sm:rounded-[48px] shadow-2xl relative flex flex-col gap-3 sm:gap-4 text-center">
             <div
                 class="w-14 h-14 bg-[#0A84FF]/20 text-[#0A84FF] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -767,7 +877,7 @@
 
             <!-- Secure Payment Badge -->
             <div id="securePaymentBadge"
-                class="flex items-center justify-center gap-2 py-1 transition-all duration-200">
+                class="flex items-center justify-center gap-2 py-2 mt-1 transition-all duration-200">
                 <div class="w-5 h-5 rounded-full bg-[#34C759]/20 flex items-center justify-center">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -789,7 +899,7 @@
 
         <!-- Feature Info Panel with Dissolve Animation -->
         <div id="subscribeInfoPanel"
-            class="glass-panel scale-in-appear w-full max-w-[800px] p-8 rounded-[48px] mt-8 mb-8">
+            class="glass-panel scale-in-appear w-full max-w-[800px] p-4 sm:p-8 rounded-3xl sm:rounded-[48px] mt-4 sm:mt-8 mb-4 sm:mb-8">
 
             <!-- Section 1: Unlimited Access -->
             <div class="flex gap-4 mb-6">
@@ -870,7 +980,7 @@
     <div id="appContainer" class="flex-1 flex flex-col h-full w-full hidden opacity-0 transition-opacity duration-500">
         <!-- Header -->
         <header
-            class="absolute top-0 w-full z-50 glass-panel scale-in-appear rounded-b-[48px] px-6 py-2 flex items-center justify-between">
+            class="absolute top-0 w-full z-50 glass-panel scale-in-appear rounded-b-3xl sm:rounded-b-[48px] px-3 sm:px-6 py-1 sm:py-2 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div
                     class="bg-gradient-to-br from-[#0A84FF] to-[#007AFF] text-white w-8 h-8 flex items-center justify-center rounded-lg shadow-lg shadow-blue-900/40">
@@ -900,10 +1010,10 @@
 
         <!-- Main Content -->
         <main
-            class="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-32 pb-0 px-4 gap-8 h-full overflow-hidden z-10 scale-in-appear">
+            class="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-24 sm:pt-32 pb-0 px-2 sm:px-4 gap-4 sm:gap-8 h-full overflow-hidden z-10 scale-in-appear">
 
             <!-- Grouped Settings -->
-            <div class="glass-panel rounded-[48px] shrink-0 z-40 relative">
+            <div class="glass-panel rounded-3xl sm:rounded-[48px] shrink-0 z-40 relative">
                 <!-- API Key -->
                 <div class="p-3 flex flex-col sm:flex-row items-center gap-3 border-b border-[#38383A]">
                     <div
@@ -955,7 +1065,7 @@
             </div>
 
             <!-- Text Input Area -->
-            <div class="glass-panel flex-1 rounded-[48px] relative flex flex-col min-h-0 overflow-hidden group mb-40 transition-all duration-300"
+            <div class="glass-panel flex-1 rounded-3xl sm:rounded-[48px] relative flex flex-col min-h-0 overflow-hidden group mb-20 sm:mb-40 transition-all duration-300"
                 id="textAreaContainer">
 
                 <!-- Watermark -->
@@ -1003,7 +1113,7 @@
 
         <!-- Fixed Bottom Player -->
         <div id="playerBar"
-            class="fixed bottom-20 w-full max-w-4xl left-0 right-0 mx-auto glass-panel pb-6 pt-4 px-6 flex flex-col gap-3 transform translate-y-[200%] opacity-0 blur-xl scale-95 pointer-events-none transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) z-50 rounded-3xl border border-white/10 shadow-2xl">
+            class="fixed bottom-4 sm:bottom-20 w-full max-w-4xl left-0 right-0 mx-auto glass-panel pb-4 sm:pb-6 pt-3 sm:pt-4 px-3 sm:px-6 flex flex-col gap-2 sm:gap-3 transform translate-y-[200%] opacity-0 blur-xl scale-95 pointer-events-none transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1) z-50 rounded-2xl sm:rounded-3xl border border-white/10 shadow-2xl">
 
             <!-- Top Row: Info & Visualizer & Toggles -->
             <div class="relative flex justify-between items-center w-full">
@@ -1103,7 +1213,8 @@
                 </div>
 
                 <!-- Center: Transport (Absolutely Centered) -->
-                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-6">
+                <div
+                    class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3 sm:gap-6">
                     <!-- Prev -->
                     <button id="prevBtn" class="text-white hover:text-[#0A84FF] transition-colors active:scale-90 p-2">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
@@ -1141,9 +1252,9 @@
 
         <!-- Playlist Overlay -->
         <div id="playlistOverlay"
-            class="fixed inset-0 z-[60] glass-overlay hidden flex-col justify-end sm:justify-center p-4">
+            class="fixed inset-0 z-[60] glass-overlay hidden flex-col justify-end sm:justify-center p-2 sm:p-4">
             <div
-                class="bg-[#1C1C1E] w-full max-w-lg mx-auto rounded-[48px] overflow-hidden border border-white/10 shadow-2xl flex flex-col max-h-[80vh]">
+                class="bg-[#1C1C1E] w-full max-w-lg mx-auto rounded-3xl sm:rounded-[48px] overflow-hidden border border-white/10 shadow-2xl flex flex-col max-h-[80vh]">
                 <!-- Playlist Header -->
                 <div class="p-4 border-b border-[#38383A] flex items-center justify-between bg-[#2C2C2E]">
                     <h3 class="font-semibold text-lg">Playlist</h3>
@@ -2399,7 +2510,13 @@
                 els.playerBar.classList.add('scale-100');
                 els.playerBar.classList.add('pointer-events-auto');
 
-                els.textAreaContainer.classList.add('mb-80');
+                // Dynamically calculate margin based on player bar height
+                requestAnimationFrame(() => {
+                    const playerHeight = els.playerBar.offsetHeight;
+                    const playerBottom = parseInt(window.getComputedStyle(els.playerBar).bottom) || 0;
+                    const newMargin = playerHeight + playerBottom + 24; // 24px buffer
+                    els.textAreaContainer.style.marginBottom = `${newMargin}px`;
+                });
 
                 els.restorePlayerBtn.classList.add('hidden');
             } else {
@@ -2415,8 +2532,10 @@
                 els.playerBar.classList.add('scale-95');
                 els.playerBar.classList.add('pointer-events-none');
 
+                // Clear inline style, revert to CSS default
+                els.textAreaContainer.style.marginBottom = '';
+
                 if (!isPlayerActive) {
-                    els.textAreaContainer.classList.remove('mb-80');
                     els.restorePlayerBtn.classList.add('hidden');
                 } else {
                     els.restorePlayerBtn.classList.remove('hidden');
@@ -2781,6 +2900,91 @@
             });
 
             btn.addEventListener('mousemove', updateGlow);
+        })();
+
+        // ====== PLAY BUTTON PRESSURE PARTICLES ======
+        (function initPlayButtonParticles() {
+            const playBtn = document.getElementById('playBtn');
+            if (!playBtn) return;
+
+            playBtn.classList.add('pressure-button'); // Add hover shake class
+
+            let particleInterval;
+
+            function spawnParticles() {
+                // Spawn 2 particles per tick for density
+                for (let i = 0; i < 2; i++) {
+                    const rect = playBtn.getBoundingClientRect();
+                    const perimeter = 2 * (rect.width + rect.height);
+                    const randomPos = Math.random() * perimeter;
+
+                    let startX, startY, angle;
+
+                    // Determine position on the rectangle edge
+                    // 0 -> width: Top Edge
+                    // width -> width + height: Right Edge
+                    // width+height -> 2*width + height: Bottom Edge
+                    // > : Left Edge
+
+                    if (randomPos < rect.width) {
+                        // Top Edge
+                        startX = rect.left + randomPos;
+                        startY = rect.top;
+                        angle = -Math.PI / 2; // Up
+                    } else if (randomPos < rect.width + rect.height) {
+                        // Right Edge
+                        startX = rect.right;
+                        startY = rect.top + (randomPos - rect.width);
+                        angle = 0; // Right
+                    } else if (randomPos < (2 * rect.width) + rect.height) {
+                        // Bottom Edge
+                        startX = rect.left + (randomPos - (rect.width + rect.height));
+                        startY = rect.bottom;
+                        angle = Math.PI / 2; // Down
+                    } else {
+                        // Left Edge
+                        startX = rect.left;
+                        startY = rect.bottom - (randomPos - ((2 * rect.width) + rect.height));
+                        angle = Math.PI; // Left
+                    }
+
+                    // Add random spread to angle (+/- 45 degrees)
+                    const spread = (Math.random() - 0.5) * (Math.PI / 2);
+                    const finalAngle = angle + spread;
+
+                    // Random distance: Min 32px (1/3 inch approx), Max 96px (1 inch approx)
+                    const distance = 32 + Math.random() * 64;
+
+                    const moveX = Math.cos(finalAngle) * distance;
+                    const moveY = Math.sin(finalAngle) * distance;
+
+                    // Create Particle
+                    const p = document.createElement('div');
+                    p.className = 'pressure-particle';
+                    p.style.left = startX + 'px';
+                    p.style.top = startY + 'px';
+                    document.body.appendChild(p);
+
+                    // Animate
+                    requestAnimationFrame(() => {
+                        p.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                        p.style.opacity = '0';
+                    });
+
+                    // Cleanup
+                    setTimeout(() => {
+                        p.remove();
+                    }, 600);
+                }
+            }
+
+            playBtn.addEventListener('mouseenter', () => {
+                particleInterval = setInterval(spawnParticles, 20); // 50fps emission
+            });
+
+            playBtn.addEventListener('mouseleave', () => {
+                clearInterval(particleInterval);
+            });
         })();
 
         // ====== SECURE BADGE GLOW (Separate handler in case particle system is disabled) ======
