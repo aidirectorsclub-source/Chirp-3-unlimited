@@ -2987,6 +2987,87 @@
             });
         })();
 
+        // ====== SUBSCRIBE BUTTON PRESSURE PARTICLES ======
+        (function initSubscribeButtonParticles() {
+            const subscribeBtn = document.getElementById('subscribeBtn');
+            if (!subscribeBtn) return;
+
+            subscribeBtn.classList.add('pressure-button'); // Add hover scale class
+
+            let particleInterval;
+
+            function spawnParticles() {
+                // Spawn 2 particles per tick for density
+                for (let i = 0; i < 2; i++) {
+                    const rect = subscribeBtn.getBoundingClientRect();
+                    const perimeter = 2 * (rect.width + rect.height);
+                    const randomPos = Math.random() * perimeter;
+
+                    let startX, startY, angle;
+
+                    // Determine position on the rectangle edge
+                    if (randomPos < rect.width) {
+                        // Top Edge
+                        startX = rect.left + randomPos;
+                        startY = rect.top;
+                        angle = -Math.PI / 2; // Up
+                    } else if (randomPos < rect.width + rect.height) {
+                        // Right Edge
+                        startX = rect.right;
+                        startY = rect.top + (randomPos - rect.width);
+                        angle = 0; // Right
+                    } else if (randomPos < (2 * rect.width) + rect.height) {
+                        // Bottom Edge
+                        startX = rect.left + (randomPos - (rect.width + rect.height));
+                        startY = rect.bottom;
+                        angle = Math.PI / 2; // Down
+                    } else {
+                        // Left Edge
+                        startX = rect.left;
+                        startY = rect.bottom - (randomPos - ((2 * rect.width) + rect.height));
+                        angle = Math.PI; // Left
+                    }
+
+                    // Add random spread to angle (+/- 45 degrees)
+                    const spread = (Math.random() - 0.5) * (Math.PI / 2);
+                    const finalAngle = angle + spread;
+
+                    // Random distance: Min 32px, Max 96px (1 inch approx)
+                    const distance = 32 + Math.random() * 64;
+
+                    const moveX = Math.cos(finalAngle) * distance;
+                    const moveY = Math.sin(finalAngle) * distance;
+
+                    // Create Particle
+                    const p = document.createElement('div');
+                    p.className = 'pressure-particle';
+                    p.style.left = startX + 'px';
+                    p.style.top = startY + 'px';
+                    document.body.appendChild(p);
+
+                    // Animate
+                    requestAnimationFrame(() => {
+                        p.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                        p.style.opacity = '0';
+                    });
+
+                    // Cleanup
+                    setTimeout(() => {
+                        p.remove();
+                    }, 600);
+                }
+            }
+
+            subscribeBtn.addEventListener('mouseenter', () => {
+                particleInterval = setInterval(spawnParticles, 20); // 50fps emission
+            });
+
+            subscribeBtn.addEventListener('mouseleave', () => {
+                clearInterval(particleInterval);
+            });
+        })();
+
+
         // ====== SECURE BADGE GLOW (Separate handler in case particle system is disabled) ======
         (function initSecureBadgeGlow() {
             const subscribeBtn = document.getElementById('subscribeBtn');
