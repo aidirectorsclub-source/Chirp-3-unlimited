@@ -109,10 +109,20 @@
 
         /* Glassmorphism Utilities */
         .glass-panel {
-            background: rgba(28, 28, 30, 0.5);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
+            /* 80% see-through -> 20% opacity. Color: #1f2121 (31, 33, 33) */
+            background: rgba(31, 33, 33, 0.2);
+            /* 20% blur -> mild blur */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            /* Glossy transparent 1 inch wide edges (approximation: 24px) */
+            border: 24px solid rgba(255, 255, 255, 0.03);
+            background-clip: padding-box;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Specific opacity override for Main Page elements as requested */
+        #appContainer .glass-panel {
+            background: rgba(31, 33, 33, 0.35);
         }
 
         .glass-overlay {
@@ -331,11 +341,16 @@
 
         .auth-input {
             width: 100%;
+            /* Glass input style */
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            /* Glossy edge for input */
+            border: 8px solid rgba(255, 255, 255, 0.03);
+            background-clip: padding-box;
             color: white;
             padding: 12px 16px;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 15px;
             transition: all 0.2s;
         }
@@ -391,14 +406,14 @@
 </head>
 
 <body
-    class="bg-black text-white h-screen flex flex-col selection:bg-[#0A84FF] selection:text-white overflow-hidden relative">
+    class="bg-[#0b0b0b] text-white h-screen flex flex-col selection:bg-[#0A84FF] selection:text-white overflow-hidden relative">
 
     <!-- Particle Background (Shared) -->
     <canvas id="particleCanvas"></canvas>
 
     <!-- LOADING SCREEN -->
     <div id="loadingScreen"
-        class="fixed inset-0 z-[100] bg-black flex items-center justify-center transition-opacity duration-500">
+        class="fixed inset-0 z-[100] bg-[#1a1a1a] flex items-center justify-center transition-opacity duration-500">
         <div class="flex flex-col items-center gap-4">
             <div class="w-12 h-12 border-4 border-[#3A3A3C] border-t-[#0A84FF] rounded-full animate-spin"></div>
             <span class="text-[#8E8E93] text-sm font-medium tracking-wide">INITIALIZING</span>
@@ -407,11 +422,11 @@
 
     <!-- AUTHENTICATION UI -->
     <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-        <div class="flex flex-col lg:flex-row items-stretch justify-center gap-6 w-full max-w-[1400px] my-8">
+        <div class="flex flex-col lg:flex-row items-stretch justify-center gap-16 w-full max-w-[1400px] my-8">
 
             <!-- LEFT PANEL: How to Use API Key -->
             <div
-                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
+                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-[48px] shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
                 <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
                     <h3 class="text-[#0A84FF] text-xl font-bold mb-4 flex items-center gap-2">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -461,13 +476,22 @@
                                 Settings" section of the app. Once connected, you're ready to start generating without
                                 limits.</p>
                         </div>
+
+                        <div class="bg-[#2C2C2E] rounded-xl p-3 border border-white/5 flex items-center gap-2">
+                            <span class="text-[#8E8E93]">Not sure how? watch this ?</span>
+                            <a href="https://youtu.be/uPWuQlWOANw?si=-pPIIUDAcsGwkRdK" target="_blank"
+                                class="text-[#34C759] font-medium transition-colors hover:text-[#32d74b]"
+                                style="text-shadow: 0 0 12px rgba(52, 199, 89, 0.6);">
+                                Youtube
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- CENTER: Login Form -->
             <div
-                class="glass-panel scale-in-appear w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 flex-shrink-0">
+                class="glass-panel scale-in-appear w-full max-w-[400px] p-8 rounded-[48px] shadow-2xl relative overflow-hidden flex flex-col gap-6 flex-shrink-0">
 
                 <!-- Header -->
                 <div class="text-center space-y-2">
@@ -553,7 +577,7 @@
 
             <!-- RIGHT PANEL: Chirp Unlimited Features -->
             <div
-                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-3xl shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
+                class="glass-panel scale-in-appear w-full lg:w-[380px] p-6 rounded-[48px] shadow-2xl relative overflow-hidden flex-shrink-0 hidden lg:block">
                 <div class="custom-scroll overflow-y-auto max-h-[70vh] pr-2">
                     <div class="flex items-center gap-3 mb-4">
                         <div
@@ -703,27 +727,27 @@
     <div id="paywallContainer"
         class="fixed inset-0 z-50 flex flex-col items-center justify-start p-4 pt-8 overflow-y-auto hidden">
         <div
-            class="glass-panel scale-in-appear w-full max-w-[400px] p-8 rounded-3xl shadow-2xl relative overflow-hidden flex flex-col gap-6 text-center">
+            class="glass-panel scale-in-appear w-full max-w-[400px] p-6 rounded-[48px] shadow-2xl relative overflow-hidden flex flex-col gap-4 text-center">
             <div
-                class="w-16 h-16 bg-[#0A84FF]/20 text-[#0A84FF] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                class="w-14 h-14 bg-[#0A84FF]/20 text-[#0A84FF] rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-1">
                 <h2 class="text-2xl font-bold tracking-tight">Unlock Unlimited</h2>
                 <p class="text-[#8E8E93] text-sm leading-relaxed">
                     Get access to premium HD voices, unlimited generation, and download capabilities.
                 </p>
             </div>
 
-            <div class="py-2">
+            <div class="py-1">
                 <div class="flex items-end justify-center gap-1">
                     <span class="text-4xl font-bold text-white">€2.99</span>
-                    <span class="text-[#8E8E93] text-lg mb-1">/mo</span>
+                    <span class="text-[#8E8E93] text-lg mb-0.5">/mo</span>
                 </div>
             </div>
             <!-- Subscribe Button -->
@@ -743,7 +767,7 @@
 
             <!-- Secure Payment Badge -->
             <div id="securePaymentBadge"
-                class="flex items-center justify-center gap-2 py-2 transition-all duration-200">
+                class="flex items-center justify-center gap-2 py-1 transition-all duration-200">
                 <div class="w-5 h-5 rounded-full bg-[#34C759]/20 flex items-center justify-center">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34C759" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round">
@@ -756,14 +780,16 @@
             </div>
 
             <p id="checkoutStatus" class="text-xs text-[#8E8E93] hidden"></p>
-
-            <button id="signOutFromPaywallBtn" class="text-sm text-[#8E8E93] hover:text-white transition-colors mt-2">
-                Sign Out
-            </button>
         </div>
 
+        <button id="signOutFromPaywallBtn"
+            class="mt-4 w-full max-w-[400px] bg-white/5 hover:bg-white/10 border border-white/10 text-[#8E8E93] hover:text-white py-2.5 rounded-xl transition-all text-sm font-medium backdrop-blur-sm z-50">
+            Sign Out
+        </button>
+
         <!-- Feature Info Panel with Dissolve Animation -->
-        <div id="subscribeInfoPanel" class="glass-panel scale-in-appear w-full max-w-[800px] p-8 rounded-2xl mt-8 mb-8">
+        <div id="subscribeInfoPanel"
+            class="glass-panel scale-in-appear w-full max-w-[800px] p-8 rounded-[48px] mt-8 mb-8">
 
             <!-- Section 1: Unlimited Access -->
             <div class="flex gap-4 mb-6">
@@ -844,7 +870,7 @@
     <div id="appContainer" class="flex-1 flex flex-col h-full w-full hidden opacity-0 transition-opacity duration-500">
         <!-- Header -->
         <header
-            class="absolute top-0 w-full z-50 glass-panel scale-in-appear border-b-0 px-6 py-4 flex items-center justify-between">
+            class="absolute top-0 w-full z-50 glass-panel scale-in-appear rounded-b-[48px] px-6 py-2 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div
                     class="bg-gradient-to-br from-[#0A84FF] to-[#007AFF] text-white w-8 h-8 flex items-center justify-center rounded-lg shadow-lg shadow-blue-900/40">
@@ -874,10 +900,10 @@
 
         <!-- Main Content -->
         <main
-            class="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-20 pb-0 px-4 gap-4 h-full overflow-hidden z-10 scale-in-appear">
+            class="flex-1 flex flex-col max-w-4xl mx-auto w-full pt-32 pb-0 px-4 gap-8 h-full overflow-hidden z-10 scale-in-appear">
 
             <!-- Grouped Settings -->
-            <div class="bg-[#1C1C1E] rounded-2xl border border-white/5 shrink-0 z-40 relative">
+            <div class="glass-panel rounded-[48px] shrink-0 z-40 relative">
                 <!-- API Key -->
                 <div class="p-3 flex flex-col sm:flex-row items-center gap-3 border-b border-[#38383A]">
                     <div
@@ -889,7 +915,8 @@
                         </svg>
                     </div>
                     <input type="password" id="apiKey" placeholder="Google Cloud API Key (for TTS)"
-                        class="flex-1 bg-transparent text-[15px] text-white placeholder-[#636366] focus:outline-none w-full">
+                        class="flex-1 text-[15px] text-white placeholder-[#636366] focus:outline-none w-full border border-white/10 rounded-2xl p-2 backdrop-blur-sm"
+                        style="background: rgba(31, 33, 33, 0.35);">
                 </div>
 
                 <!-- Voice Selection (Custom Dropdown) -->
@@ -909,7 +936,8 @@
                     <div class="relative flex-1 w-full" id="customVoiceDropdown">
                         <!-- Trigger -->
                         <div id="voiceDropdownTrigger"
-                            class="w-full bg-transparent text-[15px] text-white flex items-center justify-between cursor-pointer py-1">
+                            class="w-full text-[15px] text-white flex items-center justify-between cursor-pointer py-1 px-2 rounded-2xl"
+                            style="background: rgba(31, 33, 33, 0.35);">
                             <span id="selectedVoiceLabel" class="truncate">Select a Voice...</span>
                             <svg class="text-[#636366]" width="12" height="12" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="2">
@@ -919,7 +947,7 @@
 
                         <!-- Options List (Hidden by default) -->
                         <div id="voiceDropdownOptions"
-                            class="absolute top-full left-0 w-full mt-2 bg-[#2C2C2E] border border-white/10 rounded-xl shadow-2xl max-h-64 overflow-y-auto custom-scroll hidden">
+                            class="absolute top-full left-0 w-full mt-2 bg-[#2C2C2E] border border-white/10 rounded-2xl shadow-2xl max-h-64 overflow-y-auto custom-scroll hidden">
                             <!-- Items injected via JS -->
                         </div>
                     </div>
@@ -927,7 +955,7 @@
             </div>
 
             <!-- Text Input Area -->
-            <div class="flex-1 bg-[#1C1C1E] rounded-2xl border border-white/5 relative flex flex-col min-h-0 overflow-hidden group mb-80 transition-all duration-300"
+            <div class="glass-panel flex-1 rounded-[48px] relative flex flex-col min-h-0 overflow-hidden group mb-40 transition-all duration-300"
                 id="textAreaContainer">
 
                 <!-- Watermark -->
@@ -942,7 +970,7 @@
 
                 <!-- Text Input (Editable) -->
                 <textarea id="textInput"
-                    class="flex-1 w-full h-full p-5 bg-transparent resize-none focus:outline-none text-[17px] leading-relaxed text-white placeholder-[#636366] relative z-10"
+                    class="flex-1 w-full h-full p-5 resize-none focus:outline-none text-[17px] leading-relaxed text-white placeholder-[#636366] relative z-10 bg-transparent"
                     placeholder="Paste text here to listen..."></textarea>
 
                 <!-- Controls Overlay (Initial) -->
@@ -1115,7 +1143,7 @@
         <div id="playlistOverlay"
             class="fixed inset-0 z-[60] glass-overlay hidden flex-col justify-end sm:justify-center p-4">
             <div
-                class="bg-[#1C1C1E] w-full max-w-lg mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col max-h-[80vh]">
+                class="bg-[#1C1C1E] w-full max-w-lg mx-auto rounded-[48px] overflow-hidden border border-white/10 shadow-2xl flex flex-col max-h-[80vh]">
                 <!-- Playlist Header -->
                 <div class="p-4 border-b border-[#38383A] flex items-center justify-between bg-[#2C2C2E]">
                     <h3 class="font-semibold text-lg">Playlist</h3>
