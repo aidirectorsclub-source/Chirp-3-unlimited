@@ -274,16 +274,20 @@
             0% {
                 opacity: 0;
                 transform: scale(0.5);
+                filter: blur(24px);
+                /* Player-style blur */
             }
 
             100% {
                 opacity: 1;
                 transform: scale(1);
+                filter: blur(0);
             }
         }
 
         .scale-in-appear {
-            animation: scaleInDissolve 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            /* Updated to match Player's springy animation */
+            animation: scaleInDissolve 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
         .secure-badge-animated {
@@ -2202,6 +2206,32 @@
             return buffer;
         }
 
+        // Apply fade-in/fade-out to eliminate click/pop at audio boundaries
+        function fadePcm(samples) {
+            // LINEAR16 = 16-bit signed integers, 2 bytes per sample
+            // Create an Int16Array view over the same buffer
+            const int16View = new Int16Array(samples.buffer, samples.byteOffset, samples.byteLength / 2);
+
+            // Fade duration: ~500 samples = ~11ms at 44100Hz
+            const fadeLen = 500;
+            const len = int16View.length;
+
+            // Apply Fade-In (first fadeLen samples)
+            for (let i = 0; i < fadeLen && i < len; i++) {
+                const gain = i / fadeLen; // 0.0 to 1.0
+                int16View[i] = Math.round(int16View[i] * gain);
+            }
+
+            // Apply Fade-Out (last fadeLen samples)
+            for (let i = 0; i < fadeLen && i < len; i++) {
+                const idx = len - 1 - i;
+                const gain = i / fadeLen; // 0.0 to 1.0
+                int16View[idx] = Math.round(int16View[idx] * gain);
+            }
+
+            return samples; // Modified in-place
+        }
+
         // Text sanitization to prevent XSS and injection
         function sanitizeText(text) {
             if (!text || typeof text !== 'string') return '';
@@ -2314,6 +2344,8 @@
             if (index < 0 || index >= textChunks.length) return null;
 
             const pcm = await fetchRawPcm(textChunks[index].text);
+            // Smooth audio boundaries to eliminate click/pop
+            fadePcm(pcm);
             const wav = addWavHeader(pcm, SAMPLE_RATE);
             const blob = new Blob([wav], { type: 'audio/wav' });
             const url = URL.createObjectURL(blob);
