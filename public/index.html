@@ -1153,6 +1153,8 @@
                         <span id="statusText"
                             class="text-[11px] text-[#0A84FF] font-medium animate-pulse">Buffering...</span>
                     </div>
+                    <span id="downloadStatusText" class="text-[10px] font-medium mt-1 transition-all duration-300"
+                        style="display: none;"></span>
                 </div>
 
                 <!-- Right: Visualizer & Minimize (Integrated) -->
@@ -2178,7 +2180,8 @@
             downloadFullBtn: document.getElementById('downloadFullBtn'),
 
             audio: document.getElementById('audioPlayer'),
-            clearBtn: document.getElementById('clearBtn')
+            clearBtn: document.getElementById('clearBtn'),
+            downloadStatusText: document.getElementById('downloadStatusText')
         };
 
         window.updateSentenceTiming = function (index, duration) {
@@ -2193,6 +2196,28 @@
             const s = Math.floor(secs % 60);
             return `${m}:${s < 10 ? '0' : ''}${s}`;
         };
+
+        function updateDownloadReadyStatus() {
+            const loadedCount = Object.keys(audioQueue).length;
+            const totalCount = textChunks.length;
+
+            if (totalCount === 0) {
+                els.downloadStatusText.style.display = 'none';
+                return;
+            }
+
+            els.downloadStatusText.style.display = 'inline';
+
+            if (loadedCount === totalCount) {
+                els.downloadStatusText.textContent = 'Ready to download';
+                els.downloadStatusText.className = 'text-[10px] font-medium mt-1 transition-all duration-300 text-[#34C759]';
+                els.downloadStatusText.style.textShadow = '0 0 8px rgba(52, 199, 89, 0.8), 0 0 16px rgba(52, 199, 89, 0.5)';
+            } else {
+                els.downloadStatusText.textContent = 'Not ready for download';
+                els.downloadStatusText.className = 'text-[10px] font-medium mt-1 transition-all duration-300 text-[#FF453A]';
+                els.downloadStatusText.style.textShadow = '0 0 8px rgba(255, 69, 58, 0.8), 0 0 16px rgba(255, 69, 58, 0.5)';
+            }
+        }
 
         function addWavHeader(samples, sampleRate = 44100, numChannels = 1) {
             const buffer = new ArrayBuffer(44 + samples.length);
@@ -2262,14 +2287,72 @@
                 .replace(/&gt;/g, '>');
         }
 
-        // Updated chunkText to split by 2000 characters per chunk
+        // Sentence-aware chunkText: splits at sentence endings (periods) within 1900-2100 char range
         function chunkText(text) {
             const sanitizedText = sanitizeText(text);
-            const CHUNK_SIZE = 2000;
+            const TARGET_SIZE = 2000;
+            const MAX_SIZE = 2100;
+            const MIN_SIZE = 1500; // Minimum before searching for a break
             const chunks = [];
+            let currentIndex = 0;
 
-            for (let i = 0; i < sanitizedText.length; i += CHUNK_SIZE) {
-                const chunk = sanitizedText.slice(i, i + CHUNK_SIZE).trim();
+            while (currentIndex < sanitizedText.length) {
+                const remaining = sanitizedText.length - currentIndex;
+
+                // If remaining text is small enough, take it all
+                if (remaining <= MAX_SIZE) {
+                    const chunk = sanitizedText.slice(currentIndex).trim();
+                    if (chunk.length > 0) {
+                        chunks.push({
+                            text: decodeForTTS(chunk),
+                            start: 0,
+                            end: 0,
+                            duration: 0
+                        });
+                    }
+                    break;
+                }
+
+                // Take a window of text up to MAX_SIZE
+                const window = sanitizedText.slice(currentIndex, currentIndex + MAX_SIZE);
+
+                // Search for the last period in the window (prioritizing near TARGET_SIZE)
+                let breakPoint = -1;
+
+                // Look for last period in the range [MIN_SIZE, MAX_SIZE]
+                for (let i = MAX_SIZE - 1; i >= MIN_SIZE; i--) {
+                    if (window[i] === '.') {
+                        breakPoint = i + 1; // Include the period
+                        break;
+                    }
+                }
+
+                // Fallback: look for other sentence-ending punctuation
+                if (breakPoint === -1) {
+                    for (let i = MAX_SIZE - 1; i >= MIN_SIZE; i--) {
+                        if (window[i] === '?' || window[i] === '!' || window[i] === ';') {
+                            breakPoint = i + 1;
+                            break;
+                        }
+                    }
+                }
+
+                // Fallback: look for whitespace to avoid word breaks
+                if (breakPoint === -1) {
+                    for (let i = MAX_SIZE - 1; i >= MIN_SIZE; i--) {
+                        if (window[i] === ' ' || window[i] === '\n') {
+                            breakPoint = i + 1;
+                            break;
+                        }
+                    }
+                }
+
+                // Final fallback: hard cut at MAX_SIZE
+                if (breakPoint === -1) {
+                    breakPoint = MAX_SIZE;
+                }
+
+                const chunk = window.slice(0, breakPoint).trim();
                 if (chunk.length > 0) {
                     chunks.push({
                         text: decodeForTTS(chunk),
@@ -2278,6 +2361,8 @@
                         duration: 0
                     });
                 }
+
+                currentIndex += breakPoint;
             }
 
             return chunks.length > 0 ? chunks : [{ text: decodeForTTS(sanitizedText), start: 0, end: 0, duration: 0 }];
@@ -2362,6 +2447,7 @@
             const blob = new Blob([wav], { type: 'audio/wav' });
             const url = URL.createObjectURL(blob);
             audioQueue[index] = url;
+            updateDownloadReadyStatus();
             return url;
         }
 
@@ -2538,6 +2624,7 @@
             els.chunkDisplay.innerText = "1";
             els.seekSlider.value = 0;
             els.currentTimeText.innerText = "0:00";
+            els.downloadStatusText.style.display = 'none';
         }
 
         function togglePlayerUI(show) {
@@ -2609,6 +2696,7 @@
             audioQueue = {};
             fetchQueue = [];
             currentChunkIndex = 0;
+            updateDownloadReadyStatus();
 
             if (abortController) abortController.abort();
             abortController = new AbortController();
