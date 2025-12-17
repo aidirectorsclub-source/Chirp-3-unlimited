@@ -2208,12 +2208,14 @@
 
             els.downloadStatusText.style.display = 'inline';
 
-            if (loadedCount === totalCount) {
+            const percentage = Math.floor((loadedCount / totalCount) * 100);
+
+            if (percentage === 100) {
                 els.downloadStatusText.textContent = 'Ready to download';
                 els.downloadStatusText.className = 'text-[10px] font-medium mt-1 transition-all duration-300 text-[#34C759]';
                 els.downloadStatusText.style.textShadow = '0 0 8px rgba(52, 199, 89, 0.8), 0 0 16px rgba(52, 199, 89, 0.5)';
             } else {
-                els.downloadStatusText.textContent = 'Not ready for download';
+                els.downloadStatusText.textContent = `Not ready for download ${percentage}%`;
                 els.downloadStatusText.className = 'text-[10px] font-medium mt-1 transition-all duration-300 text-[#FF453A]';
                 els.downloadStatusText.style.textShadow = '0 0 8px rgba(255, 69, 58, 0.8), 0 0 16px rgba(255, 69, 58, 0.5)';
             }
@@ -2368,10 +2370,10 @@
             return chunks.length > 0 ? chunks : [{ text: decodeForTTS(sanitizedText), start: 0, end: 0, duration: 0 }];
         }
 
-        // Rate limiting for API calls
+        // Rate limiting for API calls (relaxed for user-provided keys)
         const rateLimiter = {
             requests: [],
-            maxRequests: 10, // Max requests per window
+            maxRequests: 100, // Increased from 10 - users have their own API keys
             windowMs: 60000, // 1 minute window
 
             canMakeRequest() {
@@ -2603,13 +2605,16 @@
         }
 
         async function prefetch(start, count) {
+            // Parallel prefetching for faster buffering
+            const promises = [];
             for (let i = 0; i < count; i++) {
                 const idx = start + i;
                 if (idx < textChunks.length && !audioQueue[idx] && !fetchQueue.includes(idx)) {
                     fetchQueue.push(idx);
-                    try { await getPlayableUrl(idx); } catch (e) { }
+                    promises.push(getPlayableUrl(idx).catch(() => { }));
                 }
             }
+            await Promise.all(promises);
         }
 
         function stopPlayback() {
